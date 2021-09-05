@@ -1,0 +1,79 @@
+// Hangman in C++ 
+
+
+#include <iostream>
+
+using namespace std;
+
+int main()
+{
+	char word[8] = "hangman";											// Correct word
+	char guessWord[8] = "_______";											// Correct guesses
+	char wrongGuesses[7] = "      ";										// Wrong guesses
+	int size = 8;													// Size of correct word
+	int term = 6;													// Max incorrect guesses (terminal num)
+	int i = 0;													// Incorrect guesses tracker
+	bool guessed = false;												// Has the word been guessed? (boolean)
+	char input;													// Input variable
+
+	
+	while (!guessed && i < term)											// While word is not guessed and num wrong guesses < term
+	{
+		cout << endl << endl;
+		for (int k = 0; k < size - 1; k++) {									// Print correct guesses array
+			cout << guessWord[k];
+		}
+		cout << "\nWrong guesses: ";
+		for (int k = 0; k < term; k++) {									// Print wrong guesses array
+			cout << wrongGuesses[k] << " ";
+		}
+		cout << "\nWrong guesses left: "  << term - i <<  endl;							// Print number of wrong guesses left
+		cout << "Input char: ";
+		cin >> input;												// Get user's guess
+		int j = 0;
+		while (j < size-1 && word[j] != input)									// Check if guessed letter is in the word
+			j++;
+		if (j >= size-1)											// Branch if incorrect guess
+		{
+			int h;
+			bool alreadyGuessed = false;
+			for ( h = 0; h < term && !alreadyGuessed; h++)							// Check if this letter was already guessed
+			{												// If true notify user but don't apply penalty
+				if (wrongGuesses[h] == input) {								
+					cout << "You already tried this incorrect letter.";
+					alreadyGuessed = true;
+				}
+			}
+			if (h >= term) {										// If user's incorrect guess was not previously guessed
+				wrongGuesses[i] = input;								// add the wrong guess to wrongGuessess array
+				i++;											// apply penalty (increase the num of wrong guesses counter)				
+			}
+		}
+		else													// Branch for correct guess
+		{
+			for (int k = 0; k < size - 1; k++) {								// Find index of correct letter in the word
+				if (word[k] == input)									// (there may be multiple occurences of the letter in the word)
+					guessWord[k] = input;								// add the correct guess to its proper index/indecies in the guessWord array
+			}												// (will begin to mirror the word array)
+			guessed = true;															
+			for (int k = 0; k < size - 1 && guessed; k++) {							// Check if entire word has now been guessed
+				if (word[k] != guessWord[k])
+					guessed = false;
+			}
+		}
+	}
+
+	if (guessed)													// Branch for if entire word has been guessed (you won)
+	{
+		cout << "\nCongrats! Word is ";
+		for (int i = 0; i < size - 1; i++)
+			cout << word[i];
+		cout << endl << endl;
+	}
+	else														// Branch if all incorrect guesses were used up (game over)
+		cout << "\nYou died.\n\n";
+
+	system("pause");
+
+	return 0;
+}
